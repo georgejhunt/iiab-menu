@@ -6,9 +6,8 @@ After=syslog.target
 Type=simple
 User=root
 Group=root
-WorkingDirectory=/opt/iiab/menus-service
-Environment=FLASK_APP=/opt/iiab/menus-service/test.py
-ExecStart=flask run --host=0.0.0.0
+WorkingDirectory=/opt/iiab/iiab-menu
+ExecStart=/opt/iiab/iiab-menu/server.py
 StandardOutput=syslog
 StandardError=syslog
 

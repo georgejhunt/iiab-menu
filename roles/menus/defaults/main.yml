@@ -1,4 +1,2 @@
 menus_service_port: 9568
-menus_service_dir: /opt/iiab/menus-service
-menus_venv: "{{ menus_service_dir }}"
-menus_app_dir: "{{ menus_service_dir }}/menus_app"
+menus_service_dir: /opt/iiab/iiab-menu
