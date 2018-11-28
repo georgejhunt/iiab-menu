@@ -1,0 +1,42 @@
+- name: Install packages needed by debuntu
+  package:
+    name: [libmysqlclient-dev,python-mysqldb,python-flask]
+    state: present
+  when: is_debuntu
+
+- name: Create directory /opt/iiab/menus-service
+  file:
+    path: "{{ menus_app_dir }}"
+    state: directory
+
+- name: 'Copy scripts'
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: roles/menus/templates/menus.py, dest: "{{ menus_app_dir }}/__init__py", mode: '0755' }
+    - { src: roles/menus/templates/menus-service.service.j2, dest: /etc/systemd/system/menus-service.service, mode: '0644' }
+    - { src: roles/menus/templates/requirements.txt, dest: "{{ menus_service_dir }}/requirements.txt", mode: '0644' }
+    - { src: roles/menus/templates/menus-service.conf.js, dest: "/etc/{{ apache_config_dir }}/menus-service.conf", mode: '0644' }
+
+
+- name: Enable Apache's menus-service
+  file:
+    src: /etc/{{ apache_config_dir }}/menus-service.conf
+    path: /etc/apache2/sites-enabled/menus-service.conf
+    state: link
+  when: is_debuntu
+
+- name: Enable & Start systemd menus-service
+  systemd:
+    name: menus-service.service
+    daemon-reload: yes
+    enabled: yes
+    state: started
+
+- name: Restart apache2
+  systemd: 
+     name: apache2
+     state: restarted
+

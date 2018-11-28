@@ -4,7 +4,7 @@
 // debug
 
 if(typeof debug == 'undefined') {
-	debug = false;
+	debug = true;
 }
 
 if(typeof forceFullDisplay == 'undefined') { // allow override in index.html
@@ -26,9 +26,10 @@ var zimVersionIdx = "/common/assets/zim_version_idx.json";
 var htmlBaseUrl = "/modules/";
 var webrootBaseUrl = "/";
 var apkBaseUrl = "/content/apk/";
-var menuUrl = '/iiab-menu/menu-files/';
 var configJson = '/iiab-menu/config.json';
-var defUrl = menuUrl + 'menu-defs/';
+var defUrl = '/menus-service/';
+var menuUrl = '/iiab-menu/menu-files/';
+var extraUrl = '/iiab-menu/menu-files/menu-defs/';
 var imageUrl = menuUrl + 'images/';
 var menuServicesUrl =  menuUrl + 'services/';
 var iiabMeterUrl = "/iiab_meter.php"
@@ -42,6 +43,7 @@ if (isMobile && !forceFullDisplay)
 var baseFontSize = 16; // for non-mobile in px
 var mobilePortraitSize = baseFontSize + "px";
 var mobileLscapeSize = baseFontSize / 2  + "px";
+var menuItems = [];
 var menuHtml = "";
 var menuDefs = {};
 var zimVersions = {};
@@ -72,6 +74,21 @@ var getZimVersions = $.getJSON(zimVersionIdx)
 zimVersions = data;})
 .fail(jsonErrhandler);
 
+
+// Get the list of menuItems
+var resp = $.ajax({
+		type: 'GET',
+		async: false,
+		url: defUrl + 'menuitemlist',
+		dataType: 'json'
+	})
+.done(function( data ) {
+      $.each( data, function( key, val ) {
+		   menuItems.push(val['name']);
+      })
+	});
+//.fail(jsonErrhandler);
+
 // This is the main processing
 if (dynamicHtml){
   //$.when(scaffold, getZimVersions, getConfigJson).then(procMenu);
@@ -80,7 +97,7 @@ if (dynamicHtml){
   var html = "";
   for (i = 0; i < menuItems.length; i++) {
   	var menu_item_name = menuItems[i];
-  	menuDefs[menu_item_name] = {}
+  	menuDefs[menu_item_name] = {};
   	menuItemDivId = i.toString() + "-" + menu_item_name;
   	menuDefs[menu_item_name]['menu_id'] = menuItemDivId;
 
@@ -113,8 +130,8 @@ function procStatic(){
 function procMenu() {
 	resizeHandler (); // if a mobile device set font-size for portrait or landscape
 	for (var i = 0; i < menuItems.length; i++) {
-		consoleLog(menuItems[i]);
-		getMenuDef(menuItems[i])
+		//consoleLog(menuItems[i]);
+		getMenuDef(menuItems[i]);
 	}
 }
 
@@ -126,13 +143,14 @@ function getMenuDef(menuItem) {
 	var resp = $.ajax({
 		type: 'GET',
 		async: true,
-		url: defUrl + menuItem + '.json',
-		dataType: 'json'
+		url: defUrl +'js?name=' +  menuItem,
+		dataType: 'text'
 	})
 	.done(function( data ) {
-		menuDefs[menuItem] = data;
+      //consoleLog('returned js: ' + data);
+		menuDefs[menuItem] = JSON.parse(data);
+		menuDefs[menuItem]['add_html'] = '';
 		menuDefs[menuItem]['menu_item_name'] = menuItem;
-		menuDefs[menuItem]['add_html'] = "";
 		menuDefs[menuItem]['menu_id'] = menuId;
 		module = menuDefs[menuItem];
 		procMenuItem(module);
@@ -152,7 +170,7 @@ function procMenuItem(module) {
 	var langClass = "";
 
 	var menuItemDivId = "#" + module['menu_id'];
-	consoleLog(module);
+	//consoleLog(module);
 	if (module['intended_use'] == "zim")
 	menuHtml += calcZimLink(module);
 	else if (module['intended_use'] == "html")
@@ -307,12 +325,12 @@ function getExtraHtml(module) {
 		var resp = $.ajax({
 			type: 'GET',
 			async: true,
-			url: defUrl + module.extra_html,
+			url: extraUrl + module.extra_html,
 			dataType: 'html'
 		})
 		.done(function( data ) {
 			//menuDefs[module.menu_item_name]['add_html'] = data;
-			consoleLog('in get extra done');
+			consoleLog('in get extra done. Extra_html: ' + data);
 			var add_html = data;
 			var re = new RegExp('##HREF-BASE##', 'g');
 			add_html = add_html.replace(re, module.href);
@@ -326,6 +344,7 @@ function getExtraHtml(module) {
 		return resp;
 	}
 }
+
 
 function checkMenuDone(){
 	ajaxCallCount -= 1;
