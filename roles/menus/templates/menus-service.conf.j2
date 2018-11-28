@@ -1,9 +1,7 @@
 #IIAB menus-service apache2 config file
 
-#ProxyPass /menus-service/  http://127.0.0.1:{{ menus_service_port }}
-#ProxyPassReverse /menus-service/  http://127.0.0.1:{{ menus_service_port }}
 WSGIScriptAlias /menus-service {{ menus_service_dir }}/server.py
-
+WSGIScriptReloading On 
 
 <Directory {{ menus_service_dir }}>
 	require all granted

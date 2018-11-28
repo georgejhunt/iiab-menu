@@ -1,2 +1,1 @@
-menus_service_port: 9568
-menus_service_dir: /opt/iiab/iiab-menu
+menus_service_dir: /opt/iiab/menus-service
