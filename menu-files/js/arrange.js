@@ -69,7 +69,7 @@ var resp = $.ajax({
          " data-id=\"" + val['id'] + 
          "\" data-name=\"" + val['name'] + 
          "\" value=\"" + val['name'] + "\">" +
-         val['title'] + " -- " + val['name'] + "</p>";
+         val['title'] + " -- " + val['name'] + "--" + val['id'] + "</p>";
          //alert(html);
       });
       //var place = $("#available").contents().find('body');
@@ -79,7 +79,23 @@ var resp = $.ajax({
 .fail(jsonErrhandler);
 }
 function available_clicked(element) {
-   alert("id::" + $(element).data('id') + "name:" + $(element).data('name'));
+   //alert("id::" + $(element).data('id') + "name:" + $(element).data('name'));
+   result = make_visible($(element).data('id'));
+}
+
+function make_visible(id) {
+var resp = $.ajax({
+		type: 'GET',
+		async: true,
+		url: defUrl + 'make_visible?id=' + id,
+		dataType: 'json'
+	})
+.done(function( data ) {
+      var resp = data.responseJSON;
+      alert(resp);
+      return resp['status'];
+	})
+.fail(jsonErrhandler);
 }
 
 function consoleLog (msg)
