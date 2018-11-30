@@ -21,8 +21,8 @@
 /* Create two equal columns that sits next to each other */
 .column {
     padding: 10px;
-    flex-basis: auto;
     height: 500px; /* Should be removed. Only for demonstration */
+    width: 500px;
 }
 #left {
    background: rgb(0,200,0);
@@ -55,17 +55,15 @@
 
 /* display row of data */
 .row {
-   display: flex;
-   display: -webkit-flex;
+   display: inline-block;
 }
 #present {
    height:500px;
-   flex: 0 0 500px;
-   min-width: 500px:
-   background: rgb(255,255,255);
+   width: 550px;
+   background: white;
 }
 #available {
    height:500px;
-   flex: 0 0 500px;
-   background: rgb(255,255,255);
+   width: 550px;
+   background: white;
 }
