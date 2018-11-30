@@ -8,11 +8,13 @@ import os
 import sys
 #import sqlite3
 import MySQLdb
+import MySQLdb.cursors
 import re
 import fnmatch
 import json
 
 MENU_BASE = "/library/www/html/iiab-menu/menu-files/menu-defs"
+ICON_BASE = "/library/www/html/iiab-menu/menu-files/images"
 os.chdir(MENU_BASE)
 
 columns = ['menu_item_name','description','title','extra_html',
@@ -33,6 +35,7 @@ for filename in os.listdir('.'):
 
 # ########## database operations ##############
 conn = MySQLdb.connect(host="localhost",
+                     cursorclass=MySQLdb.cursors.DictCursor, 
                      charset="utf8",
                      user="menus_user",
                      passwd="g0adm1n",
@@ -99,4 +102,25 @@ for filename in os.listdir('.'):
                print sql
                           
    conn.commit()
+# Get the images
+
+os.chdir(ICON_BASE)
+# scan through the menus getting the list of icon names
+sql = "SELECT logo_url,name from menus"
+num = c.execute(sql)
+rows = c.fetchall()
+for row in rows:
+   if row and row['logo_url']:
+      if os.path.isfile("./%s"%row['logo_url']):
+         with open(row['logo_url']) as icon_file:  
+            try:
+               reads = icon_file.read()
+               sql = "UPDATE menus SET icon = %s where name = %s"
+               c.execute(sql,(reads,row['name'],))
+            except Exception as e:
+               print str(e)
+               print("Logo_url error: %s"%row['logo_url'])
+      else:
+         print("logo_url file missing:%s"%row['logo_url'])
+conn.commit()
 conn.close()
