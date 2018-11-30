@@ -65,16 +65,21 @@ var resp = $.ajax({
 .done(function( data ) {
       var html = '';
       $.each( data, function( key, val ) {
-         html += "<p onclick=\"available_clicked(this.id) data-id=\"" +
-         val['id'] + "\" value=\"" +
-         val['name'] + "\">" +
+         html += "<p onclick=\"available_clicked(this)\"" +
+         " data-id=\"" + val['id'] + 
+         "\" data-name=\"" + val['name'] + 
+         "\" value=\"" + val['name'] + "\">" +
          val['title'] + " -- " + val['name'] + "</p>";
          //alert(html);
       });
-      var place = $("#available").contents().find('body');
-      place.html(html);
+      //var place = $("#available").contents().find('body');
+      //place.html(html);
+      $("#available").html(html);    
 	})
 .fail(jsonErrhandler);
+}
+function available_clicked(element) {
+   alert("id::" + $(element).data('id') + "name:" + $(element).data('name'));
 }
 
 function consoleLog (msg)
