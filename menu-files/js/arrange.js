@@ -5,6 +5,10 @@
 
 var action = "right";
 var defUrl = "/menus-service/";
+// following are the highlighted lines on left(present) 
+//    and right(available) columns
+var available_element = {};
+var present_element = {};
 
 if(typeof debug == 'undefined') {
 	debug = true;
@@ -59,6 +63,7 @@ function get_available() {
 var resp = $.ajax({
 		type: 'GET',
 		async: true,
+//		url: defUrl + 'available',
 		url: defUrl + 'available',
 		dataType: 'json'
 	})
@@ -80,9 +85,34 @@ var resp = $.ajax({
 }
 function available_clicked(element) {
    //alert("id::" + $(element).data('id') + "name:" + $(element).data('name'));
-   result = make_visible($(element).data('id'));
+   $( available_element ).css('background','#fff');
+   available_element = element;
+   $( element ).css('background','#0f0');
+   //result = make_visible($(element).data('id'));
 }
 
+function get_visible() {
+var resp = $.ajax({
+		type: 'GET',
+		async: true,
+//		url: defUrl + 'available',
+		url: defUrl + 'visible',
+		dataType: 'json'
+	})
+.done(function( data ) {
+      var html = '';
+      $.each( data, function( key, val ) {
+         html += "<p onclick=\"visible_clicked(this)\"" +
+         " data-id=\"" + val['id'] + 
+         "\" data-name=\"" + val['name'] + 
+         "\" value=\"" + val['name'] + "\">" +
+         val['title'] + " -- " + val['name'] + "--" + val['id'] + "</p>";
+         //alert(html);
+      });
+      $("#present").html(html);    
+	})
+.fail(jsonErrhandler);
+}
 function make_visible(id) {
 var resp = $.ajax({
 		type: 'GET',
@@ -96,6 +126,12 @@ var resp = $.ajax({
       return resp['status'];
 	})
 .fail(jsonErrhandler);
+}
+
+function leftclick () {
+   //alert('in leftclick');
+   make_visible($( available_element ).data('id'));
+   get_visible();
 }
 
 function consoleLog (msg)

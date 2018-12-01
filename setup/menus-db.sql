@@ -13,9 +13,6 @@ CREATE TABLE IF NOT EXISTS `menus` (
    descrip2 VARCHAR(1000),
    descrip3 VARCHAR(1000),
    present BOOLEAN DEFAULT 0,
-  `visible` BOOLEAN DEFAULT 0,
-  `seq` TINYINT DEFAULT 0,
-  `site` VARCHAR(20) DEFAULT 'default',
    extra_html VARCHAR(4000),
    icon MEDIUMBLOB,
    zim_name VARCHAR(100),
@@ -31,6 +28,16 @@ CREATE TABLE IF NOT EXISTS `menus` (
   `js` VARCHAR(10000),
   PRIMARY KEY (`id`),
   CONSTRAINT  `name` UNIQUE (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+drop table IF EXISTS chosen;
+CREATE TABLE IF NOT EXISTS `chosen` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `site` VARCHAR(20) DEFAULT 'default',
+  `menus_id` LONG NOT NULL,
+  `seq` TINYINT DEFAULT 0,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON menus_db.* TO 'menus_user'@'localhost';
