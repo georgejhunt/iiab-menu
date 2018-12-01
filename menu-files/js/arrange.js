@@ -15,9 +15,9 @@ if(typeof debug == 'undefined') {
 }
 
 $( document ).ready(function() {
-    rightclick();
     get_languages();
     get_available();
+    get_visible();
 });
 
 function upclick () {
@@ -33,12 +33,6 @@ function downclick () {
    $("#right").css("background-color","transparent");
 }
 
-function rightclick () {
-   action = "right";
-   $("#right").css("background-color","rgb(0,200,0)");
-   $("#up").css("background-color","transparent");
-   $("#down").css("background-color","transparent");
-}
 
 function get_languages() {
 var resp = $.ajax({
@@ -59,11 +53,22 @@ var resp = $.ajax({
 //.fail(jsonErrhandler);
 }
 
+function available_clicked(element) {
+   $( available_element ).css('background','#fff');
+   available_element = element;
+   $( element ).css('background','#0f0');
+}
+
+function visible_clicked(element) {
+   $( present_element ).css('background','#fff');
+   present_element = element;
+   $( element ).css('background','#0f0');
+}
+
 function get_available() {
 var resp = $.ajax({
 		type: 'GET',
 		async: true,
-//		url: defUrl + 'available',
 		url: defUrl + 'available',
 		dataType: 'json'
 	})
@@ -75,27 +80,16 @@ var resp = $.ajax({
          "\" data-name=\"" + val['name'] + 
          "\" value=\"" + val['name'] + "\">" +
          val['title'] + " -- " + val['name'] + "--" + val['id'] + "</p>";
-         //alert(html);
       });
-      //var place = $("#available").contents().find('body');
-      //place.html(html);
       $("#available").html(html);    
 	})
 .fail(jsonErrhandler);
-}
-function available_clicked(element) {
-   //alert("id::" + $(element).data('id') + "name:" + $(element).data('name'));
-   $( available_element ).css('background','#fff');
-   available_element = element;
-   $( element ).css('background','#0f0');
-   //result = make_visible($(element).data('id'));
 }
 
 function get_visible() {
 var resp = $.ajax({
 		type: 'GET',
 		async: true,
-//		url: defUrl + 'available',
 		url: defUrl + 'visible',
 		dataType: 'json'
 	})
@@ -107,31 +101,50 @@ var resp = $.ajax({
          "\" data-name=\"" + val['name'] + 
          "\" value=\"" + val['name'] + "\">" +
          val['title'] + " -- " + val['name'] + "--" + val['id'] + "</p>";
-         //alert(html);
       });
       $("#present").html(html);    
 	})
 .fail(jsonErrhandler);
 }
-function make_visible(id) {
+function choose(id) {
 var resp = $.ajax({
 		type: 'GET',
 		async: true,
-		url: defUrl + 'make_visible?id=' + id,
+		url: defUrl + 'choose?id=' + id,
 		dataType: 'json'
 	})
 .done(function( data ) {
-      var resp = data.responseJSON;
-      alert(resp);
-      return resp['status'];
+      //alert(data);
+      return data['status'];
+	})
+.fail(jsonErrhandler);
+}
+
+function unchoose(id) {
+var resp = $.ajax({
+		type: 'GET',
+		async: true,
+		url: defUrl + 'unchoose?id=' + id,
+		dataType: 'json'
+	})
+.done(function( data ) {
+      //alert(data);
+      return data['status'];
 	})
 .fail(jsonErrhandler);
 }
 
 function leftclick () {
    //alert('in leftclick');
-   make_visible($( available_element ).data('id'));
+   choose($( available_element ).data('id'));
    get_visible();
+   location.reload();
+}
+
+function rightclick () {
+   unchoose($( present_element ).data('id'));
+   get_visible();
+   location.reload();
 }
 
 function consoleLog (msg)
