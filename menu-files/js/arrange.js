@@ -20,19 +20,6 @@ $( document ).ready(function() {
     get_visible();
 });
 
-function upclick () {
-   action = "up";
-   $("#up").css("background-color","rgb(0,200,0)");
-   $("#down").css("background-color","transparent");
-   $("#right").css("background-color","transparent");
-}
-function downclick () {
-   action = "down";
-   $("#down").css("background-color","rgb(0,200,0)");
-   $("#up").css("background-color","transparent");
-   $("#right").css("background-color","transparent");
-}
-
 
 function get_languages() {
 var resp = $.ajax({
@@ -95,12 +82,15 @@ var resp = $.ajax({
 	})
 .done(function( data ) {
       var html = '';
+      var line = 0;
       $.each( data, function( key, val ) {
          html += "<p onclick=\"visible_clicked(this)\"" +
+         " id=\"" + line + "-visible\"" +
          " data-id=\"" + val['id'] + 
          "\" data-name=\"" + val['name'] + 
          "\" value=\"" + val['name'] + "\">" +
          val['title'] + " -- " + val['name'] + "--" + val['id'] + "</p>";
+         line++;
       });
       $("#present").html(html);    
 	})
@@ -134,6 +124,34 @@ var resp = $.ajax({
 .fail(jsonErrhandler);
 }
 
+function upchosen(id) {
+var resp = $.ajax({
+		type: 'GET',
+		async: true,
+		url: defUrl + 'upchosen?id=' + id,
+		dataType: 'json'
+	})
+.done(function( data ) {
+      //alert(data);
+      return data['status'];
+	})
+.fail(jsonErrhandler);
+}
+
+function downchosen(id) {
+var resp = $.ajax({
+		type: 'GET',
+		async: true,
+		url: defUrl + 'downchosen?id=' + id,
+		dataType: 'json'
+	})
+.done(function( data ) {
+      //alert(data);
+      return data['status'];
+	})
+.fail(jsonErrhandler);
+}
+
 function leftclick () {
    //alert('in leftclick');
    choose($( available_element ).data('id'));
@@ -143,6 +161,17 @@ function leftclick () {
 
 function rightclick () {
    unchoose($( present_element ).data('id'));
+   get_visible();
+   location.reload();
+}
+
+function upclick () {
+   upchosen($( present_element ).data('id'));
+   get_visible();
+   //location.reload();
+}
+function downclick () {
+   downchosen($( present_element ).data('id'));
    get_visible();
    location.reload();
 }
