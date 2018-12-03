@@ -29,6 +29,7 @@ var apkBaseUrl = "/content/apk/";
 var menuUrl = '/iiab-menu/menu-files/';
 var configJson = '/iiab-menu/config.json';
 var defUrl = menuUrl + 'menu-defs/';
+var menuItemFile = './menuitems.json';
 var imageUrl = menuUrl + 'images/';
 var menuServicesUrl =  menuUrl + 'services/';
 var iiabMeterUrl = "/iiab_meter.php"
@@ -44,6 +45,7 @@ var mobilePortraitSize = baseFontSize + "px";
 var mobileLscapeSize = baseFontSize / 2  + "px";
 var menuHtml = "";
 var menuDefs = {};
+var menuItems = {};
 var zimVersions = {};
 
 var scaffold = $.Deferred();
@@ -71,6 +73,32 @@ var getZimVersions = $.getJSON(zimVersionIdx)
 	//consoleLog(data);
 zimVersions = data;})
 .fail(jsonErrhandler);
+
+// Get the list of menuItems
+$.ajax({
+      type: 'GET',
+      async: false,
+      url: menuItemFile,
+      dataType: 'text'
+   })
+.done(function( data ) {
+     var html = '';
+     var lines = String(data);
+     lines = lines.split("\n");
+     cleaner = '';
+     for (var i = 0, len = lines.length; i < len; i++) {
+         line = lines[i].trim();
+         var n = line.search('//');
+         if (n == 0) {continue;}
+         n = line.search('menuItems');
+         if (n != -1) {cleaner += '[';continue;}
+         n = line.search(';');
+         if (n != -1) {cleaner += ']';continue;}
+         cleaner += line;
+     }
+     //alert(cleaner);
+     menuItems = JSON.parse(cleaner);
+});
 
 // This is the main processing
 if (dynamicHtml){
