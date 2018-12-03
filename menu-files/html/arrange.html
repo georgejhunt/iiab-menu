@@ -4,6 +4,7 @@
 		<link rel="stylesheet" type="text/css" href="/iiab-menu/menu-files/css/iiab-menu.css">
 		<link rel="stylesheet" type="text/css" href="/iiab-menu/menu-files/css/arrange.css">
 		<script src="/common/js/jquery.min.js"></script>
+<!--	   <script src="/iiab-menu/menu-files/js/iiab-menu.js"></script> -->
 </head>
 <body>
 		<div id="header">
@@ -26,8 +27,7 @@
      <img id="left"  height="50px" onclick="leftclick(this)" src="/iiab-menu/menu-files/images/arrow-left.svg">
    </div>
    <div>Language:
-      <select  id="lang">
-         <option value="en">English</option> 
+      <select  id="lang" onchange="onlanguage(this)">
       </select>
    </div>
 </div>

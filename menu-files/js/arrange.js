@@ -9,6 +9,7 @@ var defUrl = "/menus-service/";
 //    and right(available) columns
 var available_element = {};
 var present_element = {};
+var langSelect = [];
 
 if(typeof debug == 'undefined') {
 	debug = true;
@@ -16,7 +17,7 @@ if(typeof debug == 'undefined') {
 
 $( document ).ready(function() {
     get_languages();
-    get_available();
+    get_available('all');
     get_visible();
 });
 
@@ -29,15 +30,24 @@ var resp = $.ajax({
 		dataType: 'json'
 	})
 .done(function( data ) {
-      alert(data);
+      //alert('my data' + data);
+      $('#lang').append($('<option>',{value:0,text:"All Items"}));
+      $('#lang').append($('<option>',{value:1,text:"Downloaded"}));
+      langSelect.push('all');
+      langSelect.push('downloaded');
+      var selectIndex = 2;
       $.each( data, function( key, val ) {
-         $("#lang").append("<option data-id=\"" +
-         val['id'] + "\" value=\"" +
-         val['lang'] + "\" text=\"" +
-         val['name'] + "\" </option>");
+         $('#lang').append($('<option>', {
+            value: selectIndex,
+            text: val['name']  + '-' + val['num']
+          }));
+        // save the lookup index 
+        langSelect.push(val['lang']);
+        selectIndex++;
       })
-	});
-//.fail(jsonErrhandler);
+      //alert('langSelect = ' + langSelect);
+	})
+.fail(jsonErrhandler);
 }
 
 function available_clicked(element) {
@@ -52,11 +62,21 @@ function visible_clicked(element) {
    $( element ).css('background','#0f0');
 }
 
-function get_available() {
+function onlanguage (element) {
+   // use the langSelect to cross ref drop down index to language
+   //alert("in onlanguage " + langSelect[element.value]);
+   get_available(langSelect[element.value]);
+}
+function get_available(lang="all") {
+if ( lang === "all") {
+   dburl = defUrl + "all";
+} else {
+   dburl = defUrl + 'available?lang=' + lang;
+}
 var resp = $.ajax({
 		type: 'GET',
 		async: true,
-		url: defUrl + 'available',
+		url: dburl,
 		dataType: 'json'
 	})
 .done(function( data ) {
@@ -168,7 +188,7 @@ function rightclick () {
 function upclick () {
    upchosen($( present_element ).data('id'));
    get_visible();
-   //location.reload();
+   location.reload();
 }
 function downclick () {
    downchosen($( present_element ).data('id'));
