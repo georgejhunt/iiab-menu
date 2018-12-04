@@ -13,8 +13,9 @@ fi
 DEMODIR=$WWWROOT/home/demo
 mkdir -p $DEMODIR
 # copy sample index file if none exists in home
-if [ ! -e $WWWROOT/home/index.html ]; then
+if [ ! -e $DEMODIR/index.html ]; then
     cp samples/db-sampler.html $DEMODIR/index.html
+    cp samples/db-sampler.json $DEMODIR/menuitems.json
 fi
 #########################################################################
 
@@ -85,11 +86,9 @@ if [ "$rc" = "" ]; then
   mysql --execute "CREATE USER menus_user@localhost IDENTIFIED BY 'g0adm1n';"
 fi
 
-# start populating the menus_db
-mysql --execute "CREATE DATABASE if NOT exists 'menus_db';"
 
-mysql < languages.sql
-mysql < menus-db.sql
+mysql < setup/menus-db.sql
+mysql < setup/languages.sql
 
-$MENUSDIR/setup/defs-migrate.py
+./$MENUSDIR/setup/defs-migrate.py
 echo 'database created'

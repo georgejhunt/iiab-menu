@@ -1,6 +1,6 @@
 - name: Install packages needed by debuntu
   package:
-    name: [libmysqlclient-dev,python-mysqldb,python-flask]
+    name: [libapache2-mod-wsgi,python-mysqldb,python-flask]
     state: present
   when: is_debuntu
 
