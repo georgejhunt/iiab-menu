@@ -17,9 +17,37 @@ MENU_BASE = "/library/www/html/iiab-menu/menu-files/menu-defs"
 ICON_BASE = "/library/www/html/iiab-menu/menu-files/images"
 os.chdir(MENU_BASE)
 
+# Get the IIAB variables
+sys.path.append('/etc/iiab/')
+from iiab_env import get_iiab_env
+doc_root = get_iiab_env("WWWROOT")
+
 columns = ['menu_item_name','description','title','extra_html',
            'lang','zim_name','logo_url','intended_use','moddir',
            'start_url','apk_file','apk_file_size']
+
+def makevisible(name):
+    sql = 'SELECT name,id FROM menus WHERE name = %s'
+    c.execute(sql,(name,))
+    rv = c.fetchone()
+    siterequest = 'default'
+    # get the max of seq for the site
+    sql = "SELECT max(seq) as max FROM menus as m, chosen as c " +\
+          "WHERE c.menus_id = m.id AND c.site = %s GROUP by c.site" 
+    c.execute(sql,(siterequest,))
+    rv = c.fetchone()
+    if rv and rv['max']:
+         seq = rv['max'] + 1
+    else:
+         seq = 1
+    sql = "INSERT INTO  chosen SET menus_id = %s, site = %s, seq = %s"
+    try:
+       cur.execute(sql,(menusid,siterequest,seq,))
+       cur.commit()
+    except:
+       return 1
+    return 0
+
 # ##########  scan for variable names #############
 keys=[]
 for filename in os.listdir('.'):
@@ -123,4 +151,22 @@ for row in rows:
       else:
          print("logo_url file missing:%s"%row['logo_url'])
 conn.commit()
+
+############ look for a menuitems.json file  ##################
+menujson_path = os.path.join(doc_root,"home/menuitems.json")
+if os.path.exists(menujson_path):
+   outstr = ''
+   with open(menujson,"r") as json_file:
+      lines = json_file.read().split('\n')
+      for line in lines:
+         line = line.strip()
+         if line.find('\\') != -1:
+            continue
+         if line.find('[') != -1:
+            outstr += '['
+            continue
+         if line.find(',') != -1:
+            line = line[:-1]
+         makevisible(line)         
+
 conn.close()
