@@ -28,9 +28,18 @@ columns = ['menu_item_name','description','title','extra_html',
 
 def makevisible(name):
     sql = 'SELECT name,id FROM menus WHERE name = %s'
-    c.execute(sql,(name,))
-    rv = c.fetchone()
+    try:
+      c.execute(sql,(name,))
+      rv = c.fetchone()
+    except Exception as e:
+       print(e)
+       print("name not found in menus:%s"%name)
+       return
+    if not rv:
+       print("name not found in menus:%s"%name)
+       return
     siterequest = 'default'
+    menus_id = rv['id']
     # get the max of seq for the site
     sql = "SELECT max(seq) as max FROM menus as m, chosen as c " +\
           "WHERE c.menus_id = m.id AND c.site = %s GROUP by c.site" 
@@ -42,8 +51,8 @@ def makevisible(name):
          seq = 1
     sql = "INSERT INTO  chosen SET menus_id = %s, site = %s, seq = %s"
     try:
-       cur.execute(sql,(menusid,siterequest,seq,))
-       cur.commit()
+       c.execute(sql,(menus_id,siterequest,seq,))
+       c.commit()
     except:
        return 1
     return 0
@@ -155,18 +164,24 @@ conn.commit()
 ############ look for a menuitems.json file  ##################
 menujson_path = os.path.join(doc_root,"home/menuitems.json")
 if os.path.exists(menujson_path):
-   outstr = ''
-   with open(menujson,"r") as json_file:
+   with open(menujson_path,"r") as json_file:
       lines = json_file.read().split('\n')
       for line in lines:
          line = line.strip()
-         if line.find('\\') != -1:
+         if line.find('//') != -1:
             continue
          if line.find('[') != -1:
-            outstr += '['
             continue
-         if line.find(',') != -1:
+         if line.find(']') != -1:
+            continue
+         if line.find('",') != -1:
+            line = line[:-2]
+         if line.find('"') != -1:
+            line = line[1:]
+         if line[-1:] == '"':
             line = line[:-1]
+         if len(line) == 0:
+            continue
          makevisible(line)         
 
 conn.close()
