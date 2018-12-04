@@ -51,7 +51,7 @@ fi
 
 # copy sample menuIndex file if none exists in home
 if [ ! -e $WWWROOT/home/menuitems.json ]; then
-    cp samples/menuitem.json  $WWWROOT/home/menuitem.json
+    cp samples/menuitems.json  $WWWROOT/home/menuitems.json
 fi
 
 # restore modified files from local
