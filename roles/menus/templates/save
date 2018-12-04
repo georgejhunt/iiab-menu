@@ -3,12 +3,14 @@
 
 WWWROOT={{ doc_root }}
 MENUREPO=/opt/iiab/iiab-menu
+MENUS_SERVER_DIR=/opt/iiab/menus-service
 if [ -f /etc/iiab/iiab.env ]; then
   source /etc/iiab/iiab.env
 fi
 
 MENUDIR=$WWWROOT/iiab-menu
 cp -f {{ menus_server_dir }}/server.py $MENUREPO/roles/menus/templates/server.py
+cp -f $MENUS_SERVER_DIR/server.py $MENUREPO/roles/menus/templates/server.py
 cp -f $MENUDIR/menu-files/html/arrange.html $MENUREPO/menu-files/html/arrange.html
 cp -f $MENUDIR/menu-files/css/arrange.css $MENUREPO/menu-files/css/arrange.css
 cp -f $MENUDIR//menu-files/js/arrange.js $MENUREPO/menu-files/js/arrange.js

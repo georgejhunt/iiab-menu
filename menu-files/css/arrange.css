@@ -21,8 +21,8 @@
 /* Create two equal columns that sits next to each other */
 .column {
     padding: 10px;
-    height: 500px; /* Should be removed. Only for demonstration */
-    width: 500px;
+    height: 350px; /* Should be removed. Only for demonstration */
+    width: 550px;
 }
 #left {
    background: rgb(0,200,0);
@@ -56,10 +56,11 @@
 /* display row of data */
 .row {
    display: inline-block;
+   margin: 5px;
 }
 #present {
-   height:500px;
-   width: 500px;
+   height:350px;
+   width: 550px;
    background: white;
    overflow: scroll;
    float: left;
@@ -69,8 +70,8 @@
    margin-bottom: 2px;
 }
 #available {
-   height:500px;
-   width: 500px;
+   height:350px;
+   width: 550px;
    background: white;
    overflow: scroll;
    padding: 10px;

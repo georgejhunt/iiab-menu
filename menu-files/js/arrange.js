@@ -64,7 +64,8 @@ function visible_clicked(element) {
 
 function onlanguage (element) {
    // use the langSelect to cross ref drop down index to language
-   //alert("in onlanguage " + langSelect[element.value]);
+   //var search = langSelect[element.value];
+   //alert("in onlanguage " + search);
    get_available(langSelect[element.value]);
 }
 function get_available(lang="all") {
