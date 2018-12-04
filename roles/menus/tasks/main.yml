@@ -17,6 +17,7 @@
   with_items:
     - { src: roles/menus/templates/server.py, dest: "{{ menus_service_dir }}/server.py", mode: '0755' }
     - { src: roles/menus/templates/menus-service.conf.j2, dest: "/etc/{{ apache_config_dir }}/menus-service.conf", mode: '0644' }
+    - { src: roles/menus/files/menus-edit.html, dest: "{{ menus_service_dir  }}/index.html", mode: '0644' }
 
 
 - name: Enable Apache's menus-service
