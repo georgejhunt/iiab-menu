@@ -7,7 +7,7 @@ A menu is defined by a folder, which contains a two files: a copy of "index.html
 any name, as long as it is accompanied in a folder by a  "menuitems.json" file.
 
 The menu files are nominally in /library/www/html/iiab-menu, but the index and json files can be anywhere as the path to supporting files is absolute.
-Several sample *.json files are included in the samples directory.
+Several sample json files are included in the samples directory.
 
 A menu item, a set of links to one piece of content such as the wikipedia, is defined by a 'menu-def' json file.  There is a sample in the samples
 directory. There may also be an optional html file that contains free form html to be appended to the menu item entry.
