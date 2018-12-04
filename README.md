@@ -2,12 +2,12 @@ This repo contains a menuing system for Internet in a Box
 
 ## IIAB Menu
 
-iiab-menu is a menuing system that uses json files for each menu item, which are loaded by and rendered in javascript,
-based on an html file that contains an array of the menu items to load. This file will usually be named index.html, but can have
-any name.
+iiab-menu is a menuing system that uses json files for each menu item, which are loaded by and rendered in javascript.
+A menu is defined by a folder, which contains a two files: a copy of "index.html", and a json file, which contains the list of the menu items to load. This file will usually be named index.html, but can have
+any name, as long as it is accompanied in a folder by a single *.json file.
 
-The menu files are nominally in /library/www/html/iiab-menu, but the index file can be anywhere as the path to supporting files is absolute.
-Several sample files are included in the samples directory.
+The menu files are nominally in /library/www/html/iiab-menu, but the index and json files can be anywhere as the path to supporting files is absolute.
+Several sample *.json files are included in the samples directory.
 
 A menu item, a set of links to one piece of content such as the wikipedia, is defined by a 'menu-def' json file.  There is a sample in the samples
 directory. There may also be an optional html file that contains free form html to be appended to the menu item entry.
