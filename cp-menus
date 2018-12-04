@@ -9,6 +9,15 @@ if [ -f /etc/iiab/iiab.env ]; then
   source /etc/iiab/iiab.env
 fi
 
+############  temporary code to put old and new menues side by side #####
+DEMODIR=$WWWROOT/home/demo
+mkdir -p $DEMODIR
+# copy sample index file if none exists in home
+if [ ! -e $WWWROOT/home/index.html ]; then
+    cp samples/db-sampler.html $DEMODIR/index.html
+fi
+#########################################################################
+
 MENUDIR=$WWWROOT/iiab-menu
 mkdir -p $MENUDIR
 
@@ -68,4 +77,19 @@ fi
 # Create database and table
 mysql < setup/comments-db.sql
 
+#################  additions for fetching menu items from mysql #########
+# Check for user and create if absent
+rc=`mysql --execute "SELECT Password FROM mysql.user where Host = 'localhost' and User = 'menus_user';"`
+
+if [ "$rc" = "" ]; then
+  mysql --execute "CREATE USER menus_user@localhost IDENTIFIED BY 'g0adm1n';"
+fi
+
+# start populating the menus_db
+mysql --execute "CREATE DATABASE if NOT exists 'menus_db';"
+
+mysql < languages.sql
+mysql < menus-db.sql
+
+$MENUSDIR/setup/defs-migrate.py
 echo 'database created'
